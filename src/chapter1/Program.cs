@@ -15,19 +15,20 @@ hostBuilder.ConfigureAppConfiguration((context, config) =>
 
 hostBuilder.ConfigureServices(services =>
 {
-    services.AddSingleton<IKernel>(sp =>
+   services.AddSingleton<IKernel>(sp =>
     {
         IConfiguration configuration = sp.GetRequiredService<IConfiguration>();
-        string openAiApiKey = configuration["OPENAI_APIKEY"];
-
+        string azureOpenAIKey = "";
+        string azureOpenAIEndpoint = "";
         IKernel kernel = new KernelBuilder()
             .WithLogger(sp.GetRequiredService<ILogger<IKernel>>())
-            .Configure(config => config.AddOpenAIChatCompletionService(
-                modelId: "gpt-3.5-turbo",
-                apiKey: openAiApiKey))
+            .Configure(config => config.AddAzureChatCompletionService(
+                deploymentName: "gpt-35-turbo",
+                endpoint:azureOpenAIEndpoint,
+                apiKey: azureOpenAIKey))
             .Build();
 
-        return kernel;
+        return kernel; 
     });
 
     services.AddSingleton<IChatCompletion>(sp =>
